@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using QuizApi.Domain.IServices;
 using QuizApi.Domain.Models;
+using QuizApi.Utils;
 
 namespace QuizApi.Controllers
 {
@@ -25,6 +26,7 @@ namespace QuizApi.Controllers
                 {
                     return BadRequest(new { message = "El usuario " + usuario.NombreUsuario + " ya existe!" });
                 }
+                usuario.Password = Encriptar.EncriptarPassword(usuario.Password);
                 await _usuarioService.SaveUser(usuario);
                 return Ok( new { message = "Usuario registrado con exito!" });
             }
