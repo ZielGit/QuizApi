@@ -1,4 +1,5 @@
-﻿using QuizApi.Domain.IRepositories;
+﻿using Microsoft.EntityFrameworkCore;
+using QuizApi.Domain.IRepositories;
 using QuizApi.Domain.Models;
 using QuizApi.Persistence.Context;
 
@@ -16,6 +17,12 @@ namespace QuizApi.Persistence.Repositories
         {
             _context.Add(usuario);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> ValidateExistence(Usuario usuario)
+        {
+            var validateExistence = await _context.Usuarios.AnyAsync(x => x.NombreUsuario == usuario.NombreUsuario);
+            return validateExistence;
         }
     }
 }
