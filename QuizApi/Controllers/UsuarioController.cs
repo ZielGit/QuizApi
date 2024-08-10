@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using QuizApi.Domain.IServices;
 using QuizApi.Domain.Models;
+using QuizApi.DTO;
 using QuizApi.Utils;
 
 namespace QuizApi.Controllers
@@ -29,6 +30,32 @@ namespace QuizApi.Controllers
                 usuario.Password = Encriptar.EncriptarPassword(usuario.Password);
                 await _usuarioService.SaveUser(usuario);
                 return Ok( new { message = "Usuario registrado con exito!" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Route("CambiarPassword")]
+        [HttpPut]
+        public async Task<IActionResult> CambiarPassword([FromBody] CambiarPasswordDTO cambiarPassword)
+        {
+            try
+            {
+                int idUsuario = 2;
+                string passwordEncriptado = Encriptar.EncriptarPassword(cambiarPassword.passwordAnterior);
+                var usuario = await _usuarioService.ValidatePassword(idUsuario, passwordEncriptado);
+                if (usuario == null)
+                {
+                    return BadRequest(new { message = "La password es incorrecta." });
+                }
+                else
+                {
+                    usuario.Password = Encriptar.EncriptarPassword(cambiarPassword.nuevaPassword);
+                    await _usuarioService.UpdatePassword(usuario);
+                    return Ok(new { message = "La password fue actualizada con exito!" });
+                }
             }
             catch (Exception ex)
             {
