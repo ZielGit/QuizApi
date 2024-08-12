@@ -16,6 +16,9 @@ builder.Services.AddScoped<ILoginService, LoginService>();
 // Repositories
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<ILoginRepository, LoginRepository>();
+// Cors
+builder.Services.AddCors(options => options.AddPolicy("AllowWebapp", 
+    builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -30,6 +33,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseCors("AllowWebapp");
 
 app.UseAuthorization();
 
