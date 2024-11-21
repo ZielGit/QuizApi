@@ -1,9 +1,12 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using QuizApi.Domain.IRepositories;
 using QuizApi.Domain.IServices;
 using QuizApi.Persistence.Context;
 using QuizApi.Persistence.Repositories;
 using QuizApi.Services;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +22,21 @@ builder.Services.AddScoped<ILoginRepository, LoginRepository>();
 // Cors
 builder.Services.AddCors(options => options.AddPolicy("AllowWebapp", 
     builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
+
+// Add Authentication
+builder.Services.AddAuthorization()
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options => options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"])),
+        ClockSkew = TimeSpan.Zero
+    });
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

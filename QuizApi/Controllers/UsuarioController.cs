@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using QuizApi.Domain.IServices;
 using QuizApi.Domain.Models;
@@ -38,6 +40,7 @@ namespace QuizApi.Controllers
         }
 
         [Route("CambiarPassword")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPut]
         public async Task<IActionResult> CambiarPassword([FromBody] CambiarPasswordDTO cambiarPassword)
         {
