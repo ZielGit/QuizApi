@@ -6,6 +6,7 @@ using QuizApi.Domain.IServices;
 using QuizApi.Domain.Models;
 using QuizApi.DTO;
 using QuizApi.Utils;
+using System.Security.Claims;
 
 namespace QuizApi.Controllers
 {
@@ -46,7 +47,8 @@ namespace QuizApi.Controllers
         {
             try
             {
-                int idUsuario = 2;
+                var identity = HttpContext.User.Identity as ClaimsIdentity;
+                int idUsuario = JwtConfigurator.GetTokenIdUsuario(identity);
                 string passwordEncriptado = Encriptar.EncriptarPassword(cambiarPassword.passwordAnterior);
                 var usuario = await _usuarioService.ValidatePassword(idUsuario, passwordEncriptado);
                 if (usuario == null)
